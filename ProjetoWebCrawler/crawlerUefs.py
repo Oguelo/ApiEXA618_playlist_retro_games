@@ -6,13 +6,10 @@ import concurrent.futures
 from database import obter_conexao
 from datetime import datetime
 
-# (REMOVIDO: starPrograma = rodar_populador())
+
 
 def buscar_links_generico(categoria, anoAtivo, limite_paginas):
-    """
-    Navega pelas páginas de listagem e coleta todos os links encontrados.
-    :param limite_paginas: Define o número máximo de páginas a serem lidas (ex: 10).
-    """
+
     headers = {'User-Agent': 'Bot-Academico-EXA618/1.0'}
     links_coletados = []
     pagina_atual = 1
@@ -28,7 +25,6 @@ def buscar_links_generico(categoria, anoAtivo, limite_paginas):
         try:
             response = requests.get(url_busca, headers=headers)
             if response.status_code == 404:
-                print("  -> Fim das páginas alcançado para este filtro.")
                 break
                 
             response.raise_for_status()
@@ -56,7 +52,6 @@ def buscar_links_generico(categoria, anoAtivo, limite_paginas):
 
 
 def extrair_dados_jogo(url):
-    # Disfarce de navegador real (Chrome no Windows)
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
         'Accept-Language': 'en-US,en;q=0.9'
@@ -187,10 +182,10 @@ def rodar_populador():
                     urls_ja_salvas.add(url)
 
         conexao.commit()
-        print(f"✅ Ano {ano} salvo no banco com sucesso!")
+        print(f" Ano {ano} salvo ")
 
     conexao.close()
-    print("\n🚀 PROCESSO FINALIZADO!")
+    print("\n PROCESSO FINALIZADO!")
 
 if __name__ == '__main__':
     rodar_populador()
