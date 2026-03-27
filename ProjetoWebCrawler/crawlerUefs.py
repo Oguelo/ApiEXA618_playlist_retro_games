@@ -144,7 +144,6 @@ def rodar_populador():
     cursor.execute("SELECT url FROM jogos")
     urls_ja_salvas = {linha[0] for linha in cursor.fetchall()}
 
-    print("=== INICIANDO POPULAÇÃO ACELERADA DO BANCO ===")
 
     for ano in anos_para_processar:
         print(f"\nBuscando páginas de {ano}...")
