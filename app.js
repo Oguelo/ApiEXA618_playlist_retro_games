@@ -81,7 +81,7 @@ async function gerarPlaylist() {
   url.searchParams.append("ano_fim", anoFim);
   url.searchParams.append("nota_minima", nota);
   url.searchParams.append("votos_minimos", votosMinimos);
-  url.searchParams.append("tamanho",tamanho);
+  url.searchParams.append("tamanho_playlist",tamanho);
   
   filtrosSelecionados.genero.forEach((g) =>
     url.searchParams.append("genero", g),
