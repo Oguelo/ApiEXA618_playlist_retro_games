@@ -62,6 +62,7 @@ async function preencherListasDeFiltros() {
 async function inicializarApp() {
   try {
     await preencherListasDeFiltros();
+    atualizarTelaDeFavoritos(); // Atualiza a grade de favoritos ao iniciar
   } catch (erro) {
     console.error("API Offline ou Erro de conexão.");
     document.getElementById("grade-resultados").innerHTML =
@@ -117,7 +118,6 @@ async function gerarPlaylist() {
           ? jogo.imagem_url
           : "https://via.placeholder.com/300x200/333333/aaaaaa?text=Sem+Capa";
           
-   
       const jogoStringSegura = encodeURIComponent(JSON.stringify(jogo));
 
       const card = `
@@ -134,7 +134,7 @@ async function gerarPlaylist() {
                         <div class="botoes-acao">
                             <a href="${jogo.link_download}" target="_blank" class="btn-link btn-download">Baixar</a>
                             <a href="${jogo.link_youtube}" target="_blank" class="btn-link btn-youtube">YouTube</a>
-                            <button onclick="salvarJogoLocalmente('${jogoStringSegura}')" class="btn-link" style="background-color: #ffaa00; color: #121212; border: none; cursor: pointer; font-weight: bold;">⭐ Salvar</button>
+                            <button onclick="salvarJogoLocalmente('${jogoStringSegura}')" class="btn-link" style="background-color: #ffaa00; color: #121212;">⭐ Salvar</button>
                         </div>
                     </div>
                 </div>
@@ -146,6 +146,8 @@ async function gerarPlaylist() {
     divResultados.innerHTML = `<h3 style="color: var(--danger);">${erro.message}</h3>`;
   }
 }
+
+
 
 function obterFavoritos() {
     const favoritos = localStorage.getItem('retroPlaylist_favoritos');
@@ -161,9 +163,10 @@ function salvarJogoLocalmente(jogoEncoded) {
     if (!jaExiste) {
         favoritos.push(jogo);
         localStorage.setItem('retroPlaylist_favoritos', JSON.stringify(favoritos));
-        alert(` "${jogo.titulo}" foi adicionado aos seus favoritos!`);
+        atualizarTelaDeFavoritos(); // Renderiza novamente na tela
+        alert(`🎮 "${jogo.titulo}" foi adicionado aos seus favoritos!`);
     } else {
-        alert(`O jogo "${jogo.titulo}" já está na sua lista.`);
+        alert(`⚠️ O jogo "${jogo.titulo}" já está na sua lista.`);
     }
 }
 
@@ -171,7 +174,50 @@ function removerJogoLocalmente(tituloDoJogo) {
     let favoritos = obterFavoritos();
     favoritos = favoritos.filter(f => f.titulo !== tituloDoJogo);
     localStorage.setItem('retroPlaylist_favoritos', JSON.stringify(favoritos));
-    alert(` "${tituloDoJogo}" foi removido da lista.`);
+    atualizarTelaDeFavoritos(); // Renderiza novamente na tela
+}
+
+function atualizarTelaDeFavoritos() {
+    const gradeFavoritos = document.getElementById("grade-favoritos");
+    if (!gradeFavoritos) return;
+
+    const favoritos = obterFavoritos();
+
+    if (favoritos.length === 0) {
+        gradeFavoritos.innerHTML = `
+            <div class="estado-vazio" style="grid-column: 1 / -1; padding: 40px;">
+                <p>Nenhum jogo salvo na sua lista de favoritos ainda.</p>
+            </div>
+        `;
+        return;
+    }
+
+    gradeFavoritos.innerHTML = "";
+    favoritos.forEach((jogo) => {
+        const imgSrc = jogo.imagem_url && jogo.imagem_url !== "Sem imagem"
+            ? jogo.imagem_url
+            : "https://via.placeholder.com/300x200/333333/aaaaaa?text=Sem+Capa";
+
+        const card = `
+            <div class="card">
+                <img src="${imgSrc}" alt="${jogo.titulo}">
+                <div class="card-info">
+                    <h3 class="card-title">${jogo.titulo}</h3>
+                    <div class="tag-container">
+                        <span class="tag">Ano: ${jogo.ano}</span>
+                        <span class="tag">Plataforma: ${jogo.plataforma || "N/A"}</span>
+                    </div>
+                    <span class="nota">Nota: ${jogo.nota.toFixed(1)}</span>
+                    <div class="botoes-acao">
+                        <a href="${jogo.link_download}" target="_blank" class="btn-link btn-download">Baixar</a>
+                        <a href="${jogo.link_youtube}" target="_blank" class="btn-link btn-youtube">YouTube</a>
+                        <button onclick="removerJogoLocalmente('${jogo.titulo}')" class="btn-link" style="background-color: var(--danger); color: white;">🗑️ Remover</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        gradeFavoritos.innerHTML += card;
+    });
 }
 
 window.onload = inicializarApp;
