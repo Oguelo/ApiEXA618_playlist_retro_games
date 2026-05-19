@@ -81,7 +81,7 @@ async function gerarPlaylist() {
   url.searchParams.append("ano_fim", anoFim);
   url.searchParams.append("nota_minima", nota);
   url.searchParams.append("votos_minimos", votosMinimos);
-  url.searchParams.append("tamanho_playlist",tamanho);
+  url.searchParams.append("tamanho_playlist", tamanho);
   
   filtrosSelecionados.genero.forEach((g) =>
     url.searchParams.append("genero", g),
@@ -116,6 +116,10 @@ async function gerarPlaylist() {
         jogo.imagem_url && jogo.imagem_url !== "Sem imagem"
           ? jogo.imagem_url
           : "https://via.placeholder.com/300x200/333333/aaaaaa?text=Sem+Capa";
+          
+   
+      const jogoStringSegura = encodeURIComponent(JSON.stringify(jogo));
+
       const card = `
                 <div class="card">
                     <img src="${imgSrc}" alt="${jogo.titulo}">
@@ -130,6 +134,7 @@ async function gerarPlaylist() {
                         <div class="botoes-acao">
                             <a href="${jogo.link_download}" target="_blank" class="btn-link btn-download">Baixar</a>
                             <a href="${jogo.link_youtube}" target="_blank" class="btn-link btn-youtube">YouTube</a>
+                            <button onclick="salvarJogoLocalmente('${jogoStringSegura}')" class="btn-link" style="background-color: #ffaa00; color: #121212; border: none; cursor: pointer; font-weight: bold;">⭐ Salvar</button>
                         </div>
                     </div>
                 </div>
@@ -141,4 +146,32 @@ async function gerarPlaylist() {
     divResultados.innerHTML = `<h3 style="color: var(--danger);">${erro.message}</h3>`;
   }
 }
+
+function obterFavoritos() {
+    const favoritos = localStorage.getItem('retroPlaylist_favoritos');
+    return favoritos ? JSON.parse(favoritos) : [];
+}
+
+function salvarJogoLocalmente(jogoEncoded) {
+    const jogo = JSON.parse(decodeURIComponent(jogoEncoded));
+    const favoritos = obterFavoritos();
+
+    const jaExiste = favoritos.find(f => f.titulo === jogo.titulo);
+
+    if (!jaExiste) {
+        favoritos.push(jogo);
+        localStorage.setItem('retroPlaylist_favoritos', JSON.stringify(favoritos));
+        alert(` "${jogo.titulo}" foi adicionado aos seus favoritos!`);
+    } else {
+        alert(`O jogo "${jogo.titulo}" já está na sua lista.`);
+    }
+}
+
+function removerJogoLocalmente(tituloDoJogo) {
+    let favoritos = obterFavoritos();
+    favoritos = favoritos.filter(f => f.titulo !== tituloDoJogo);
+    localStorage.setItem('retroPlaylist_favoritos', JSON.stringify(favoritos));
+    alert(` "${tituloDoJogo}" foi removido da lista.`);
+}
+
 window.onload = inicializarApp;

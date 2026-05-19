@@ -8,12 +8,10 @@
       type="image/png"
       href="https://img.icons8.com/?size=100&id=KQB8Td3dLtFI&format=png&color=000000"
     />
-    <img
-      src="https://img.icons8.com/?size=100&id=KQB8Td3dLtFI&format=png&color=000000"
-      alt="Logo Retro"
-      class="logo-header"
-    />
     <title>Retro Games Playlist</title>
+    
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=stadia_controller"
@@ -23,17 +21,20 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <style>
+      /* CSS da Logo atualizado para comportar o modelo 3D */
       .logo-header {
-        width: 100px;
-        height: auto;
+        width: 120px;
+        height: 120px;
         margin-bottom: 10px;
-        filter: drop-shadow(0 0 10px var(--primary));
+        filter: drop-shadow(0 0 15px var(--primary));
         transition: transform 0.3s ease;
+        outline: none; /* Remove a borda ao clicar no 3D */
       }
 
       .logo-header:hover {
         transform: scale(1.1);
       }
+      
       footer {
         width: 95%;
         max-width: 1200px;
@@ -159,14 +160,6 @@
         text-transform: uppercase;
         letter-spacing: 2px;
         margin-bottom: 5px;
-      }
-      .online {
-        background-color: rgba(3, 218, 198, 0.2);
-        color: var(--accent);
-      }
-      .offline {
-        background-color: rgba(207, 102, 121, 0.2);
-        color: var(--danger);
       }
 
       .container {
@@ -320,7 +313,6 @@
         margin-bottom: 20px;
         font-size: 1.2em;
       }
-      /* ESTILOS DOS CHIPS/TAGS MULTI-SELECT */
       .tags-container {
         display: flex;
         flex-wrap: wrap;
@@ -366,7 +358,6 @@
         }
       }
       @media (max-width: 768px) {
-        /* O painel de filtros e os resultados ficam um debaixo do outro */
         .container {
           flex-direction: column;
           align-items: center;
@@ -388,6 +379,17 @@
     </style>
   </head>
   <body>
+    <model-viewer
+      src="logo.glb"
+      alt="Logo 3D Retro"
+      auto-rotate
+      camera-controls
+      rotation-per-second="30deg"
+      interaction-prompt="none"
+      class="logo-header"
+      style="background-color: transparent;"
+    ></model-viewer>
+
     <div class="header">
       <h1>Retro Playlist Engine</h1>
       <p class="subtitulo">
